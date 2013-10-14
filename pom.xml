@@ -4,9 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>bs</groupId>
+    <groupId>bvp.bs</groupId>
     <artifactId>battery_status</artifactId>
     <version>0.0.1</version>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
 
     <dependencies>
     <dependency>
@@ -16,4 +20,61 @@
     </dependency>
     </dependencies>
 
+    <build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-shade-plugin</artifactId>
+            <executions>
+                <execution>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>shade</goal>
+                    </goals>
+                </execution>
+            </executions>
+            <configuration>
+                <shadedArtifactAttached>true</shadedArtifactAttached> <!-- Make the shaded artifact not the main one -->
+                <shadedClassifierName>shaded</shadedClassifierName> <!-- set the suffix to the shaded jar -->
+            </configuration>
+        </plugin>
+
+        <plugin>
+            <groupId>org.bluestemsoftware.open.maven.plugin</groupId>
+            <artifactId>launch4j-plugin</artifactId>
+            <executions>
+                <execution>
+                    <id>l4j-gui</id>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>launch4j</goal>
+                    </goals>
+                    <configuration>
+                        <headerType>gui</headerType>
+                        <outfile>target/battery_status.exe</outfile>
+                        <jar>target/${artifactId}-${version}-shaded.jar</jar> <!-- 'shaded' is the value set on shadedClassifierName above -->
+                        <classPath>
+                            <mainClass>bvp.bs.Main</mainClass>
+                        </classPath>
+                        <icon>src/main/resources/icon/battery_status.ico</icon>
+                        <jre>
+                            <minVersion>1.7.0</minVersion>
+                        </jre>
+                        <versionInfo>
+                            <fileVersion>0.0.1.0</fileVersion>
+                            <txtFileVersion>0.0.1.0</txtFileVersion>
+                            <fileDescription>Check battery status</fileDescription>
+                            <copyright>bvp</copyright>
+                            <productVersion>0.0.1.0</productVersion>
+                            <txtProductVersion>0.0.1.0</txtProductVersion>
+                            <productName>Battery Status</productName>
+                            <internalName>Battery_status</internalName>
+                            <originalFilename>battery_status.exe</originalFilename>
+                        </versionInfo>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build>
 </project>
